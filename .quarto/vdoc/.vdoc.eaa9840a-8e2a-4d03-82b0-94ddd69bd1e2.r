@@ -1,29 +1,29 @@
----
-title: "Analyzing Music Data"
-author: "Kara Reed"
-execute:
-    echo: false
----
-
-```{r}
+#
+#
+#
+#
+#
+#
+#
+#
 #| message: false
 library(tidyverse)
-```
-
-```{r}
+#
+#
+#
 #| cache: true
 music <- read_csv("data/music.csv", show_col_types = FALSE)
-```
-
-```{r}
+#
+#
+#
 print(names(music))
-```
-
-```{r}
+#
+#
+#
 glimpse(music |> select(starts_with("artist")))
-```
-
-```{r}
+#
+#
+#
 music |>
     select(
         artist.name,
@@ -37,9 +37,9 @@ music |>
         song.year
     ) |>
     slice_head(n = 8)
-```
-
-```{r}
+#
+#
+#
 music |>
     summarise(
         across(
@@ -62,9 +62,9 @@ music |>
     ) |>
     pivot_wider(names_from = statistic, values_from = value) |>
     select(variable, minimum, first_quartile, median, third_quartile, maximum)
-```
-
-```{r}
+#
+#
+#
 year_values <- music |>
     filter(!is.na(song.year), song.year != 0)
 
@@ -76,9 +76,9 @@ ggplot(year_values, aes(x = song.year)) +
         x = "Year",
         y = "Number of songs"
     )
-```
-
-```{r}
+#
+#
+#
 music |>
     summarise(
         across(
@@ -98,72 +98,9 @@ music |>
         names_to = "column",
         values_to = "placeholder_rows"
     )
-```
-
-```{r}
-music |>
-    distinct(artist.id, artist.latitude, artist.longitude) |>
-    mutate(
-        coordinate_status = if_else(
-            artist.latitude == 0 & artist.longitude == 0,
-            "Placeholder",
-            "Usable"
-        )
-    ) |>
-    count(coordinate_status, name = "artists")
-```
-
-```{r}
-world_map <- maps::map("world", plot = FALSE, fill = TRUE)
-world_map <- ggplot2::fortify(world_map)
-
-artist_locations <- music |>
-    filter(
-        !is.na(artist.latitude),
-        !is.na(artist.longitude),
-        !(artist.latitude == 0 & artist.longitude == 0),
-        !is.na(song.year),
-        song.year != 0
-    ) |>
-    distinct(
-        artist.id,
-        artist.latitude,
-        artist.longitude,
-        song.year
-    )
-
-ggplot() +
-    geom_polygon(
-        data = world_map,
-        aes(x = long, y = lat, group = group),
-        fill = "gray90",
-        color = "gray60",
-        linewidth = 0.2
-    ) +
-    geom_point(
-        data = artist_locations,
-        aes(
-            x = artist.longitude,
-            y = artist.latitude,
-            color = song.year
-        ),
-        alpha = 0.45,
-        size = 1.2
-    ) +
-    scale_color_viridis_c(name = "Song year") +
-    coord_quickmap() +
-    labs(
-        title = "Artist Locations Colored by Song Year",
-        subtitle = str_wrap(
-            "Only artists with usable coordinates and nonzero song years are shown.",
-            width = 85
-        ),
-        x = "Longitude",
-        y = "Latitude"
-    )
-```
-
-```{r}
+#
+#
+#
 billboard_long <- billboard |>
     pivot_longer(
         cols = starts_with("wk"),
@@ -223,4 +160,6 @@ ggplot(top_10_songs, aes(x = week, y = rank,
         x = "Weeks on chart",
         y = "Ranking"
     )
-```
+#
+#
+#

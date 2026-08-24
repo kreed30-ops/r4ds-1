@@ -1,29 +1,29 @@
----
-title: "Analyzing Music Data"
-author: "Kara Reed"
-execute:
-    echo: false
----
-
-```{r}
+#
+#
+#
+#
+#
+#
+#
+#
 #| message: false
 library(tidyverse)
-```
-
-```{r}
+#
+#
+#
 #| cache: true
 music <- read_csv("data/music.csv", show_col_types = FALSE)
-```
-
-```{r}
+#
+#
+#
 print(names(music))
-```
-
-```{r}
+#
+#
+#
 glimpse(music |> select(starts_with("artist")))
-```
-
-```{r}
+#
+#
+#
 music |>
     select(
         artist.name,
@@ -37,9 +37,9 @@ music |>
         song.year
     ) |>
     slice_head(n = 8)
-```
-
-```{r}
+#
+#
+#
 music |>
     summarise(
         across(
@@ -62,9 +62,9 @@ music |>
     ) |>
     pivot_wider(names_from = statistic, values_from = value) |>
     select(variable, minimum, first_quartile, median, third_quartile, maximum)
-```
-
-```{r}
+#
+#
+#
 year_values <- music |>
     filter(!is.na(song.year), song.year != 0)
 
@@ -76,9 +76,9 @@ ggplot(year_values, aes(x = song.year)) +
         x = "Year",
         y = "Number of songs"
     )
-```
-
-```{r}
+#
+#
+#
 music |>
     summarise(
         across(
@@ -98,9 +98,9 @@ music |>
         names_to = "column",
         values_to = "placeholder_rows"
     )
-```
-
-```{r}
+#
+#
+#
 music |>
     distinct(artist.id, artist.latitude, artist.longitude) |>
     mutate(
@@ -111,9 +111,9 @@ music |>
         )
     ) |>
     count(coordinate_status, name = "artists")
-```
-
-```{r}
+#
+#
+#
 world_map <- maps::map("world", plot = FALSE, fill = TRUE)
 world_map <- ggplot2::fortify(world_map)
 
@@ -122,14 +122,14 @@ artist_locations <- music |>
         !is.na(artist.latitude),
         !is.na(artist.longitude),
         !(artist.latitude == 0 & artist.longitude == 0),
-        !is.na(song.year),
-        song.year != 0
+        !is.na(artist.familiarity),
+        artist.familiarity > 0
     ) |>
     distinct(
         artist.id,
         artist.latitude,
         artist.longitude,
-        song.year
+        artist.familiarity
     )
 
 ggplot() +
@@ -145,25 +145,22 @@ ggplot() +
         aes(
             x = artist.longitude,
             y = artist.latitude,
-            color = song.year
+            color = artist.familiarity
         ),
         alpha = 0.45,
         size = 1.2
     ) +
-    scale_color_viridis_c(name = "Song year") +
+    scale_color_viridis_c(name = "Artist familiarity") +
     coord_quickmap() +
     labs(
-        title = "Artist Locations Colored by Song Year",
-        subtitle = str_wrap(
-            "Only artists with usable coordinates and nonzero song years are shown.",
-            width = 85
-        ),
+        title = "Artist Locations Colored by Familiarity",
+        subtitle = "Shows artists with usable coordinates and familiarity greater than 0.",
         x = "Longitude",
         y = "Latitude"
     )
-```
-
-```{r}
+#
+#
+#
 billboard_long <- billboard |>
     pivot_longer(
         cols = starts_with("wk"),
@@ -223,4 +220,6 @@ ggplot(top_10_songs, aes(x = week, y = rank,
         x = "Weeks on chart",
         y = "Ranking"
     )
-```
+#
+#
+#
